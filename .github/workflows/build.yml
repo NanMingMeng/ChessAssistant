@@ -1,35 +1,28 @@
 name: Build Android APK
-
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
-
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-
     - name: Download AI Engine
       run: |
         mkdir -p app/src/main/assets
         mkdir -p app/src/main/jniLibs/arm64-v8a
         wget -q "https://github.com/official-pikafish/Pikafish/releases/download/2026-01-02/pikafish.nnue" -O app/src/main/assets/pikafish.nnue
         wget -q "https://github.com/official-pikafish/Pikafish/releases/download/2026-01-02/pikafish-armv8-dotprod" -O app/src/main/jniLibs/arm64-v8a/libpikafish.so || true
-
     - name: Build
       run: ./gradlew assembleDebug
-
     - name: Upload APK
       uses: actions/upload-artifact@v3
       with:
